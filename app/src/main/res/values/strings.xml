@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Floating Hub</string>
     <string name="service_title">Floating Hub Actif</string>
-    <string name="service_description">Boutons WhatsApp & TikTok actifs</string>
+    <string name="service_description">Boutons WhatsApp &amp; TikTok actifs</string>
     <string name="btn_start">Démarrer</string>
     <string name="btn_stop">Arrêter</string>
 </resources>
