@@ -5,10 +5,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
+import kotlin.math.abs
 
 class FloatingView(
     private val context: Context,
@@ -16,6 +18,11 @@ class FloatingView(
 ) {
 
     private var containerView: LinearLayout? = null
+    private val params = WindowManager.LayoutParams()
+    private var initialX = 0
+    private var initialY = 0
+    private var initialTouchX = 0f
+    private var initialTouchY = 0f
 
     init {
         createFloatingView()
@@ -34,7 +41,7 @@ class FloatingView(
             setBackgroundColor(android.graphics.Color.parseColor("#25D366"))
             setTextColor(android.graphics.Color.WHITE)
             textSize = 14f
-            setPadding(20, 20, 20, 20)
+            setPadding(25, 20, 25, 20)
             setOnClickListener {
                 openWhatsApp()
             }
@@ -46,69 +53,117 @@ class FloatingView(
             setBackgroundColor(android.graphics.Color.parseColor("#000000"))
             setTextColor(android.graphics.Color.WHITE)
             textSize = 14f
-            setPadding(20, 20, 20, 20)
+            setPadding(25, 20, 25, 20)
             setOnClickListener {
                 openTikTok()
             }
         }
 
-        // Ajouter les boutons
+        // Ajouter les boutons au container
         containerView!!.addView(btnWhatsApp)
         containerView!!.addView(btnTikTok)
 
-        // Paramètres de la fenêtre
-        val params = WindowManager.LayoutParams().apply {
+        // Paramètres de la fenêtre flottante
+        params.apply {
             type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
                 @Suppress("DEPRECATION")
                 WindowManager.LayoutParams.TYPE_PHONE
             }
-            format = android.graphics.PixelFormat.TRANSLUCENT
+            format = android.graphics.PixelFormat.RGBA_8888
             flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
             width = WindowManager.LayoutParams.WRAP_CONTENT
             height = WindowManager.LayoutParams.WRAP_CONTENT
-            gravity = Gravity.BOTTOM or Gravity.END
-            x = 50
-            y = 50
+            gravity = Gravity.TOP or Gravity.LEFT
+            x = 0
+            y = 100
         }
 
-        windowManager.addView(containerView, params)
+        try {
+            windowManager.addView(containerView, params)
+            Toast.makeText(context, "✅ Boutons flottants activés !", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, "❌ Erreur : ${e.message}", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
     }
 
     private fun openWhatsApp() {
         try {
+            val pm = context.packageManager
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("https://wa.me/")
-                `package` = "com.whatsapp"
             }
-            context.startActivity(intent)
+            
+            // Chercher WhatsApp
+            val activities = pm.queryIntentActivities(intent, 0)
+            var whatsappFound = false
+            
+            for (activity in activities) {
+                if (activity.activityInfo.packageName == "com.whatsapp" ||
+                    activity.activityInfo.packageName == "com.whatsapp.w4b") {
+                    intent.`package` = activity.activityInfo.packageName
+                    whatsappFound = true
+                    break
+                }
+            }
+            
+            if (whatsappFound) {
+                context.startActivity(intent)
+            } else {
+                // Rediriger vers Play Store
+                context.startActivity(Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse("https://play.google.com/store/apps/details?id=com.whatsapp")
+                })
+                Toast.makeText(context, "📥 Installe WhatsApp depuis Play Store", Toast.LENGTH_LONG).show()
+            }
         } catch (e: Exception) {
-            Toast.makeText(context, "❌ WhatsApp non installé", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "❌ Erreur WhatsApp : ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun openTikTok() {
         try {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("https://www.tiktok.com")
-                `package` = "com.ss.android.ugc.tiktok"
+            val pm = context.packageManager
+            val intent = Intent(Intent.ACTION_VIEW)
+            
+            // Chercher TikTok
+            val tiktokPackage = "com.ss.android.ugc.tiktok"
+            val activities = pm.queryIntentActivities(intent, 0)
+            var tiktokFound = false
+            
+            for (activity in activities) {
+                if (activity.activityInfo.packageName == tiktokPackage) {
+                    intent.data = Uri.parse("https://www.tiktok.com")
+                    intent.`package` = tiktokPackage
+                    tiktokFound = true
+                    break
+                }
             }
-            context.startActivity(intent)
+            
+            if (tiktokFound) {
+                context.startActivity(intent)
+            } else {
+                // Rediriger vers Play Store
+                context.startActivity(Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse("https://play.google.com/store/apps/details?id=$tiktokPackage")
+                })
+                Toast.makeText(context, "📥 Installe TikTok depuis Play Store", Toast.LENGTH_LONG).show()
+            }
         } catch (e: Exception) {
-            Toast.makeText(context, "❌ TikTok non installé", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "❌ Erreur TikTok : ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     fun removeView() {
-        if (containerView != null) {
-            try {
+        try {
+            if (containerView != null) {
                 windowManager.removeView(containerView)
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
