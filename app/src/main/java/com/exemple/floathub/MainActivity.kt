@@ -18,22 +18,24 @@ class MainActivity : AppCompatActivity() {
         val btnStart = findViewById<Button>(R.id.btn_start)
         val btnStop = findViewById<Button>(R.id.btn_stop)
 
-        // Bouton START
         btnStart.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (Settings.canDrawOverlays(this)) {
-                    startFloatingService()
-                } else {
-                    requestOverlayPermission()
-                }
-            } else {
-                startFloatingService()
-            }
+            checkPermissionAndStart()
         }
 
-        // Bouton STOP
         btnStop.setOnClickListener {
             stopFloatingService()
+        }
+    }
+
+    private fun checkPermissionAndStart() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.canDrawOverlays(this)) {
+                startFloatingService()
+            } else {
+                requestOverlayPermission()
+            }
+        } else {
+            startFloatingService()
         }
     }
 
@@ -45,25 +47,21 @@ class MainActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             startService(intent)
         }
-        Toast.makeText(this, "✅ Service démarré !", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "✅ Service démarré - Les boutons vont apparaître !", Toast.LENGTH_LONG).show()
     }
 
     private fun stopFloatingService() {
         val intent = Intent(this, FloatingService::class.java)
         stopService(intent)
-        Toast.makeText(this, "❌ Service arrêté !", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "❌ Service arrêté", Toast.LENGTH_SHORT).show()
     }
 
     private fun requestOverlayPermission() {
+        Toast.makeText(this, "⚠️ Tu dois autoriser l'affichage par-dessus", Toast.LENGTH_LONG).show()
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
             Uri.parse("package:$packageName")
         )
         startActivity(intent)
-        Toast.makeText(
-            this,
-            "📱 Autorise l'affichage par-dessus les autres apps",
-            Toast.LENGTH_LONG
-        ).show()
     }
 }
