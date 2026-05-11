@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aircraftwar.game.GameManager
 import com.aircraftwar.utils.GameLogger
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 @Composable
 fun GameScreen() {
@@ -78,7 +77,10 @@ fun GameScreen() {
 fun GameStats(gameManager: GameManager, fps: Int) {
     Column(
         modifier = Modifier
-            .background(Color.Black.copy(alpha = 0.6f), shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+            .background(
+                Color.Black.copy(alpha = 0.6f),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+            )
             .padding(12.dp)
     ) {
         Row(
@@ -127,7 +129,10 @@ fun GameControls(gameManager: GameManager, onStateChange: (GameState) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black.copy(alpha = 0.6f), shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+            .background(
+                Color.Black.copy(alpha = 0.6f),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+            )
             .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -150,7 +155,7 @@ fun GameControls(gameManager: GameManager, onStateChange: (GameState) -> Unit) {
                 modifier = Modifier.size(50.dp)
             ) {
                 Icon(
-                    if (gameManager.isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+                    if (gameManager.isPaused) Icons.Default.PlayArrow else androidx.compose.material.icons.filled.Pause,
                     contentDescription = "Pause",
                     tint = Color(255, 200, 100),
                     modifier = Modifier.size(32.dp)
@@ -317,11 +322,10 @@ fun GameCanvas(
     modifier: Modifier = Modifier,
     gameManager: GameManager
 ) {
-    Canvas(
+    Box(
         modifier = modifier
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
-                    // Gestion du swipe
                     val dx = dragAmount.x
                     val dy = dragAmount.y
                     
@@ -330,15 +334,12 @@ fun GameCanvas(
                     gameManager.player.moveLeft = dx < -5
                     gameManager.player.moveRight = dx > 5
                 }
-            },
-        onDraw = {
-            // Fond
-            drawRect(Color(20, 20, 40))
-            
-            // Rendu du jeu (simplifié pour Compose)
-            // Dans une vraie impl, utiliser Canvas neatif ou GLSurfaceView
-        }
-    )
+            }
+            .background(Color(20, 20, 40)),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("🎮 Jeu en cours...", color = Color.White, fontSize = 24.sp)
+    }
 }
 
 enum class GameState {
@@ -362,17 +363,6 @@ suspend fun startGameLoop(gameManager: GameManager, onFpsUpdate: (Int) -> Unit) 
             lastFpsUpdate = currentTime
         }
         
-        kotlinx.coroutines.delay(16) // ~60 FPS
+        delay(16) // ~60 FPS
     }
-}
-
-@Composable
-fun Canvas(
-    modifier: Modifier = Modifier,
-    onDraw: androidx.compose.ui.graphics.drawscope.DrawScope.() -> Unit
-) {
-    androidx.compose.foundation.Canvas(
-        modifier = modifier,
-        onDraw = onDraw
-    )
 }
