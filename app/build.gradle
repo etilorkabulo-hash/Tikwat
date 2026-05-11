@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
 }
 
 android {
@@ -16,6 +16,7 @@ android {
         versionName = "2.0.0-pro"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -59,44 +60,45 @@ android {
 }
 
 dependencies {
+
     // Compose
-    implementation("androidx.compose.ui:ui:1.6.0")
-    implementation("androidx.compose.material3:material3:1.1.2")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
-    implementation("androidx.compose.foundation:foundation:1.6.0")
-    implementation("androidx.compose.runtime:runtime:1.6.0")
-    
+    implementation "androidx.compose.ui:ui:1.6.0"
+    implementation "androidx.compose.material3:material3:1.1.2"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.6.0"
+    implementation "androidx.compose.foundation:foundation:1.6.0"
+    implementation "androidx.compose.runtime:runtime:1.6.0"
+
     // Activity & Lifecycle
-    implementation("androidx.activity:activity-compose:1.8.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-compose:2.6.2")
-    
+    implementation "androidx.activity:activity-compose:1.8.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-compose:2.6.2"
+
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.5")
-    
+    implementation "androidx.navigation:navigation-compose:2.7.5"
+
     // Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.22")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    
-    // Game Development
-    implementation("com.google.android.games:play-services-games-v2:17.0.0")
-    implementation("androidx.media3:media3-common:1.1.1")
-    
-    // Logging
-    implementation("com.google.firebase:firebase-analytics:21.6.0")
-    implementation("com.google.firebase:firebase-crashlytics:18.6.0")
-    
-    // Preferences
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+
+    // Game / Services
+    implementation "com.google.android.games:play-services-games-v2:17.0.0"
+    implementation "androidx.media3:media3-common:1.1.1"
+
+    // Firebase
+    implementation "com.google.firebase:firebase-analytics:21.6.0"
+    implementation "com.google.firebase:firebase-crashlytics:18.6.0"
+
+    // DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
     // Testing
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-    testImplementation("io.kotest:kotest-runner-junit4:5.7.0")
-    
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0")
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:5.1.0"
+    testImplementation "io.kotest:kotest-runner-junit4:5.7.0"
+
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.6.0"
+
+    debugImplementation "androidx.compose.ui:ui-tooling:1.6.0"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.6.0"
 }
