@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Tikwat"
+rootProject.name = "AircraftWarPro"
 include ':app'
