@@ -41,7 +41,7 @@ class WeatherSystem(private val cycleDuration: Int = 1200) {
             WeatherType.SNOW -> 0.7f
         }
         
-        windForce = sin(Math.toRadians(weatherPhase * 2)).toFloat() * when (currentWeather) {
+        windForce = sin(Math.toRadians((weatherPhase * 2).toDouble())).toFloat() * when (currentWeather) {
             WeatherType.CLEAR -> 0.1f
             WeatherType.RAIN -> 0.3f
             WeatherType.STORM -> 0.8f
