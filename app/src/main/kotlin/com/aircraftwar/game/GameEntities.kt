@@ -2,6 +2,7 @@ package com.aircraftwar.game
 
 import com.aircraftwar.world.WeatherSystem
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 abstract class GameEntity(
     open var x: Double,
@@ -58,7 +59,7 @@ class Player(
     
     private var velocityX = 0.0
     private var velocityY = 0.0
-    private val baseSpeed = 8.0
+    val baseSpeed = 8.0  // ✅ PUBLIC - CORRIGÉ
     var currentSpeed = baseSpeed
     
     override fun update(weatherSystem: WeatherSystem?) {
@@ -137,15 +138,28 @@ class Enemy(
         shootTimer++
     }
     
-    fun shouldShoot() = shootTimer >= shootInterval.also { shootTimer = 0 }
+    fun shouldShoot(): Boolean {
+        if (shootTimer >= shootInterval) {
+            shootTimer = 0
+            return true
+        }
+        return false
+    }
     
-    fun takeDamage(amount: Int) { health -= amount }
+    fun takeDamage(amount: Int) { 
+        health -= amount 
+    }
     
     fun isAlive() = health > 0
     fun isOffScreen() = y > 850
 }
 
-enum class EnemyType(val health: Int, val shootInterval: Int, val score: Int, val symbol: String) {
+enum class EnemyType(
+    val health: Int, 
+    val shootInterval: Int, 
+    val score: Int, 
+    val symbol: String
+) {
     BASIC(25, 120, 10, "🔴"),
     STRONG(60, 90, 30, "🔶"),
     FAST(20, 150, 15, "🟠"),
@@ -176,7 +190,11 @@ class Projectile(
     fun isOffScreen() = y < -20 || y > 850
 }
 
-class PowerUp(x: Double, y: Double, val type: PowerUpType) : GameEntity(x, y, 25.0, 25.0) {
+class PowerUp(
+    x: Double, 
+    y: Double, 
+    val type: PowerUpType
+) : GameEntity(x, y, 25.0, 25.0) {
     
     override var x = x
     override var y = y
@@ -189,7 +207,10 @@ class PowerUp(x: Double, y: Double, val type: PowerUpType) : GameEntity(x, y, 25
     fun isOffScreen() = y > 850
 }
 
-enum class PowerUpType(val symbol: String, val effect: (Player) -> Unit) {
+enum class PowerUpType(
+    val symbol: String, 
+    val effect: (Player) -> Unit
+) {
     HEALTH("❤", { it.heal(40) }),
     AMMO("🔫", { it.ammo = (it.ammo + 60).coerceAtMost(it.maxAmmo) }),
     SHIELD("🛡", { it.shield = it.maxShield }),
